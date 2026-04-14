@@ -1,4 +1,9 @@
 <script>
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+	
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
+
 	import { onMount, onDestroy } from 'svelte';
 	import { 
 		currentUser, userData, authLoading, initAuth, 
