@@ -314,11 +314,8 @@
 			
 			<div class="nav-right">
 				<button type="button" class="theme-toggle-btn" onclick={toggleTheme} title="เปลี่ยนโหมดสี" aria-label="Toggle Dark Mode">
-					{#if $theme === 'dark'}
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-					{:else}
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-					{/if}
+					<svg class="sun-icon" class:active={$theme === 'dark'} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+					<svg class="moon-icon" class:active={$theme !== 'dark'} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
 				</button>
 				{#if user}
 					<NotificationDropdown {user} />
@@ -652,12 +649,21 @@
 
 	.nav-logo-image { width: 32px; height: 32px; object-fit: contain; }
 	.theme-toggle-btn {
+		position: relative; overflow: hidden;
 		width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent;
 		color: var(--color-text-muted); display: flex; align-items: center; justify-content: center;
 		cursor: pointer; transition: all 0.3s var(--ease-spring); flex-shrink: 0; margin-right: 4px;
 	}
 	.theme-toggle-btn:hover { background: var(--color-bg-hover); color: var(--color-text); transform: scale(1.05); }
 	.theme-toggle-btn:active { transform: scale(0.9); }
+	.theme-toggle-btn svg {
+		position: absolute;
+		transition: transform 0.5s var(--ease-spring), opacity 0.3s var(--ease-out);
+	}
+	.sun-icon { transform: rotate(90deg) scale(0.5); opacity: 0; }
+	.sun-icon.active { transform: rotate(0) scale(1); opacity: 1; }
+	.moon-icon { transform: rotate(-90deg) scale(0.5); opacity: 0; }
+	.moon-icon.active { transform: rotate(0) scale(1); opacity: 1; }
 
 	/* ── Search ── */
 	.nav-search {
@@ -710,6 +716,11 @@
 	.nav-icon-link.active::after {
 		content: ''; position: absolute; bottom: 0; left: 25%; right: 25%;
 		height: 2px; background: var(--color-primary); border-radius: 2px 2px 0 0;
+		animation: scaleWidth 0.3s var(--ease-spring) forwards;
+	}
+	@keyframes scaleWidth {
+		0% { transform: scaleX(0); opacity: 0; }
+		100% { transform: scaleX(1); opacity: 1; }
 	}
 
 	/* ── Profile Button ── */

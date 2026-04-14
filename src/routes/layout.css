@@ -150,6 +150,15 @@ body {
 	overflow-x: hidden;
 	width: 100%;
 	font-feature-settings: "cv11", "ss01";
+	transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out);
+}
+
+/* Global Theme Transition Surfaces */
+.classic-card, .top-nav, .left-sidebar, .bottom-nav, .search-dropdown-results {
+	transition: background-color 0.4s var(--ease-out),
+				color 0.4s var(--ease-out),
+				border-color 0.4s var(--ease-out),
+				box-shadow 0.4s var(--ease-out) !important;
 }
 
 /* ============================================
