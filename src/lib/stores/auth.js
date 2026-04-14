@@ -75,10 +75,12 @@ export function initAuth() {
 /** Auth Methods */
 export async function loginWithGoogle() {
 	await signInWithPopup(auth, googleProvider);
+	window.location.href = '/';
 }
 
 export async function loginWithFacebook() {
 	await signInWithPopup(auth, fbProvider);
+	window.location.href = '/';
 }
 
 export async function loginWithEmail(email, password) {
@@ -106,4 +108,5 @@ export async function registerWithEmail(email, password, displayName) {
 
 export async function logout() {
 	await signOut(auth);
+	window.location.href = '/';
 }

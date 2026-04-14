@@ -135,6 +135,7 @@
 			} else {
 				await loginWithEmail(email, password);
 			}
+			window.location.href = '/';
 		} catch (error) {
 			console.error(error);
 			authError = error.message;
