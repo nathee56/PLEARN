@@ -187,9 +187,10 @@
 	.bell-btn {
 		background: transparent; border: none; width: 36px; height: 36px; border-radius: 50%;
 		display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text);
-		position: relative; transition: background 0.12s var(--ease-out);
+		position: relative; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.12s;
 	}
-	.bell-btn:hover { background: var(--color-bg-hover); }
+	.bell-btn:hover { background: var(--color-bg-hover); transform: scale(1.05); }
+	.bell-btn:active { transform: scale(0.9); }
 
 	.badge {
 		position: absolute; top: 0; right: 0; background: var(--color-danger); color: white;
@@ -226,10 +227,11 @@
 	.notif-item {
 		display: flex; align-items: center; width: 100%; text-align: left; padding: 12px 16px;
 		background: transparent; border: none; border-bottom: 1px solid var(--color-border-light);
-		cursor: pointer; transition: background 0.12s var(--ease-out); gap: 12px;
+		cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); gap: 12px;
 	}
 	.notif-item:last-child { border-bottom: none; }
-	.notif-item:hover { background: var(--color-bg-hover); }
+	.notif-item:hover { background: var(--color-bg-hover); padding-left: 20px; }
+	.notif-item:active { transform: scale(0.98); }
 	.notif-item.unread { background: var(--color-primary-soft); }
 	.notif-item.unread:hover { background: rgba(230, 81, 0, 0.08); }
 
