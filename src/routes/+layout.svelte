@@ -2,8 +2,10 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { 
 		currentUser, userData, authLoading, initAuth, 
-		loginWithGoogle, loginWithFacebook, loginWithEmail, registerWithEmail 
+		loginWithGoogle, loginWithFacebook, loginWithEmail, registerWithEmail,
+		completeOnboarding
 	} from '$lib/stores/auth';
+	import { theme, toggleTheme } from '$lib/stores/theme';
 	import { db } from '$lib/firebase';
 	import { collection, query, where, getCountFromServer, getDocs, limit, orderBy, startAt, endAt } from 'firebase/firestore';
 	import { page } from '$app/stores';
@@ -49,6 +51,29 @@
 	let isSearching = $state(false);
 	let showSearchDropdown = $state(false);
 	let searchTimeout;
+
+	// Onboarding States
+	let onboardingName = $state('');
+	let isSavingOnboarding = $state(false);
+
+	$effect(() => {
+		if (userInfo && userInfo.isSetupComplete === false && !onboardingName) {
+			onboardingName = userInfo.displayName || '';
+		}
+	});
+
+	async function handleCompleteSetup(e) {
+		e.preventDefault();
+		if (!onboardingName.trim() || isSavingOnboarding) return;
+		isSavingOnboarding = true;
+		try {
+			await completeOnboarding(onboardingName.trim());
+		} catch(err) {
+			console.error(err);
+		} finally {
+			isSavingOnboarding = false;
+		}
+	}
 
 	// Spotlight Hover Interaction
 	function handleSpotlightMove(e) {
@@ -205,10 +230,13 @@
 		<div class="nav-container">
 			<div class="nav-left">
 				{#if !user}
-					<a href="/" class="nav-brand-text-only">PLEARN</a>
+					<a href="/" class="nav-brand-group">
+						<img src="/logo.png" class="nav-logo-image" alt="PLEARN Logo" />
+						<span class="nav-brand-text">PLEARN</span>
+					</a>
 				{:else}
 					<a href="/" class="nav-brand-group">
-						<div class="nav-logo circ">P</div>
+						<img src="/logo.png" class="nav-logo-image" alt="PLEARN Logo" />
 						<span class="nav-brand-text">PLEARN</span>
 					</a>
 				{/if}
@@ -280,6 +308,13 @@
 			{/if}
 			
 			<div class="nav-right">
+				<button type="button" class="theme-toggle-btn" onclick={toggleTheme} title="เปลี่ยนโหมดสี" aria-label="Toggle Dark Mode">
+					{#if $theme === 'dark'}
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+					{:else}
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+					{/if}
+				</button>
 				{#if user}
 					<NotificationDropdown {user} />
 					<a href="/profile" class="nav-profile-btn">
@@ -291,7 +326,7 @@
 						<span class="nav-name">{userInfo?.displayName?.split(' ')[0] || 'โปรไฟล์'}</span>
 					</a>
 				{:else}
-					<div class="nav-logo circ landing-logo-right">P</div>
+					<img src="/logo.png" class="nav-logo-image landing-logo-right" alt="PLEARN Logo" />
 				{/if}
 			</div>
 		</div>
@@ -553,6 +588,25 @@
 
 <Toast />
 
+{#if userInfo && userInfo.isSetupComplete === false}
+	<div class="onboarding-modal-overlay">
+		<form class="onboarding-modal classic-card" onsubmit={handleCompleteSetup}>
+			<div class="ob-icon">👋</div>
+			<h2 class="ob-title">ขอต้อนรับสู่ PLEARN</h2>
+			<p class="ob-desc">ก่อนจะไปเริ่มใช้งาน กรุณาตั้งชื่อที่คุณต้องการให้แสดงในชุมชนนี้ (คุณสามารถเปลี่ยนชื่อใหม่ได้ตลอดในหน้าตั้งค่า)</p>
+			
+			<div class="ob-input-group">
+				<label for="ob-name">ชื่อที่แสดง (Display Name)</label>
+				<input type="text" id="ob-name" bind:value={onboardingName} class="auth-input" required placeholder="ชื่อของคุณ..." />
+			</div>
+
+			<button type="submit" class="auth-btn btn-primary" disabled={isSavingOnboarding}>
+				{isSavingOnboarding ? 'กำลังบันทึก...' : 'เข้าสู่ PLEARN เลย!'}
+			</button>
+		</form>
+	</div>
+{/if}
+
 <style>
 	/* ============================================
 	   PLEARN World-Class UI — Layout Styles
@@ -589,18 +643,13 @@
 		letter-spacing: -0.04em; display: block;
 	}
 
-	.nav-brand-text-only {
-		font-size: 20px; font-weight: 800; color: var(--color-primary);
-		text-decoration: none; letter-spacing: -0.04em; line-height: 1;
+	.nav-logo-image { width: 32px; height: 32px; object-fit: contain; }
+	.theme-toggle-btn {
+		width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent;
+		color: var(--color-text-muted); display: flex; align-items: center; justify-content: center;
+		cursor: pointer; transition: all 0.2s; flex-shrink: 0; margin-right: 4px;
 	}
-
-	.nav-logo {
-		font-size: 14px; font-weight: 800; color: white; text-decoration: none;
-		letter-spacing: -0.02em; line-height: 1;
-		display: flex; align-items: center; justify-content: center;
-		background: var(--color-primary);
-	}
-	.nav-logo.circ { width: 32px; height: 32px; border-radius: 50%; }
+	.theme-toggle-btn:hover { background: var(--color-bg-hover); color: var(--color-text); }
 
 	/* ── Search ── */
 	.nav-search {
@@ -797,6 +846,24 @@
 	/* ── Promo Section ── */
 	.promo-wave-top { width: 100%; line-height: 0; margin-top: 64px; margin-bottom: -1px; }
 	.promo-wave-top svg { width: 100%; height: auto; display: block; }
+
+	/* ── Onboarding ── */
+	.onboarding-modal-overlay {
+		position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+		background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+		display: flex; align-items: center; justify-content: center;
+		z-index: 9999; padding: 24px;
+	}
+	.onboarding-modal {
+		width: 100%; max-width: 420px; padding: 32px 24px;
+		display: flex; flex-direction: column; text-align: center;
+		animation: slideDown 0.4s var(--ease-out);
+	}
+	.ob-icon { font-size: 48px; margin-bottom: 12px; line-height: 1; }
+	.ob-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--color-text); }
+	.ob-desc { font-size: 14px; color: var(--color-text-muted); margin-bottom: 24px; line-height: 1.5; }
+	.ob-input-group { text-align: left; margin-bottom: 24px; }
+	.ob-input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--color-text-muted); margin-bottom: 6px; }
 
 	.promo-section {
 		background: var(--color-bg-card);

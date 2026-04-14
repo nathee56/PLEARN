@@ -40,7 +40,8 @@ export function initAuth() {
 					email: user.email || '',
 					role: isAdmin ? 'admin' : 'user',
 					createdAt: serverTimestamp(),
-					lastActive: serverTimestamp()
+					lastActive: serverTimestamp(),
+					isSetupComplete: false
 				};
 				await setDoc(userRef, newUserData);
 				userData.set(newUserData);
@@ -99,7 +100,8 @@ export async function registerWithEmail(email, password, displayName) {
 		email: user.email || '',
 		role: isAdmin ? 'admin' : 'user',
 		createdAt: serverTimestamp(),
-		lastActive: serverTimestamp()
+		lastActive: serverTimestamp(),
+		isSetupComplete: true
 	};
 	
 	await setDoc(doc(db, 'users', user.uid), newUserData);
@@ -109,4 +111,14 @@ export async function registerWithEmail(email, password, displayName) {
 export async function logout() {
 	await signOut(auth);
 	window.location.href = '/';
+}
+
+export async function completeOnboarding(displayName) {
+	if (!auth.currentUser) return;
+	const userRef = doc(db, 'users', auth.currentUser.uid);
+	await updateDoc(userRef, { displayName, isSetupComplete: true });
+	userData.update(data => {
+		if (data) return { ...data, displayName, isSetupComplete: true };
+		return data;
+	});
 }
