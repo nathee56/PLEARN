@@ -1,0 +1,231 @@
+@import 'tailwindcss';
+
+/* ============================================
+   PLEARN Design System — World-Class Edition
+   Inspired by Apple HIG / Google Material You
+   60/30/10 Color Architecture
+   ============================================ */
+
+@theme {
+	/* Font families */
+	--font-sans: 'Inter', 'IBM Plex Sans Thai', system-ui, -apple-system, sans-serif;
+	--font-thai: 'IBM Plex Sans Thai', 'Inter', system-ui, sans-serif;
+	--font-content: var(--font-sans);
+
+	/* 4px Grid Spacing System */
+	--spacing-xs: 4px;
+	--spacing-sm: 8px;
+	--spacing-md: 16px;
+	--spacing-lg: 24px;
+	--spacing-xl: 32px;
+	--spacing-2xl: 48px;
+	--spacing-3xl: 64px;
+
+	/* Consistent Radius System */
+	--radius-xs: 4px;
+	--radius-sm: 6px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-2xl: 20px;
+	--radius-full: 9999px;
+}
+
+/* Formal mode */
+:root.font-formal * {
+	--font-sans: 'Inter', 'Sarabun', system-ui, -apple-system, sans-serif !important;
+	--font-thai: 'Sarabun', 'Inter', system-ui, sans-serif !important;
+	--font-content: 'Sarabun', 'Inter', system-ui, sans-serif !important;
+}
+
+/* Mixed mode (Default) */
+:root.font-mixed .pc-text,
+:root.font-mixed .cm-text,
+:root.font-mixed .cm-input {
+	font-family: 'Sarabun', 'Inter', system-ui, sans-serif !important;
+}
+
+/* ----------------------------------
+   Light Mode — 60/30/10 Architecture
+   60% = #FAFAFA (bg)
+   30% = #FFFFFF (surfaces)
+   10% = #E65100 (accent)
+   ---------------------------------- */
+:root {
+	/* 60% — Dominant Background */
+	--color-bg: #F5F5F7;
+	--color-bg-card: #FFFFFF;
+	--color-bg-elevated: #FFFFFF;
+	--color-bg-hover: rgba(0, 0, 0, 0.04);
+	--color-bg-input: #F0F0F2;
+
+	/* 10% — PLEARN Orange Accent */
+	--color-primary: #E65100;
+	--color-primary-hover: #BF360C;
+	--color-primary-soft: rgba(230, 81, 0, 0.08);
+	--color-primary-glow: rgba(230, 81, 0, 0.1);
+
+	/* Navigation */
+	--color-nav-bg: #FFFFFF;
+	--color-nav-text: #E65100;
+
+	/* Pure Neutral Typography (No blue/yellow tint) */
+	--color-text: #1A1A1A;
+	--color-text-secondary: #6E6E73;
+	--color-text-muted: #AEAEB2;
+
+	/* Hairline borders — Apple-style subtle */
+	--color-border: #D2D2D7;
+	--color-border-light: rgba(0, 0, 0, 0.06);
+
+	/* Semantic Colors */
+	--color-gold: #F5A623;
+	--color-success: #34C759;
+	--color-danger: #FF3B30;
+
+	/* Layered Shadow System (like Apple) */
+	--shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+	--shadow-elevated: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.1), 0 12px 40px rgba(0, 0, 0, 0.04);
+	--shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.06);
+
+	/* Standard Easing */
+	--ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ----------------------------------
+   Dark Mode — Same 60/30/10 Logic
+   ---------------------------------- */
+.dark {
+	--color-bg: #0A0A0A;
+	--color-bg-card: #161616;
+	--color-bg-elevated: #1C1C1E;
+	--color-bg-hover: rgba(255, 255, 255, 0.06);
+	--color-bg-input: #1C1C1E;
+
+	--color-primary: #FF7043;
+	--color-primary-hover: #FF8A65;
+	--color-primary-soft: rgba(255, 112, 67, 0.1);
+	--color-primary-glow: rgba(255, 112, 67, 0.12);
+
+	--color-nav-bg: #161616;
+	--color-nav-text: #E5E5EA;
+
+	--color-text: #F2F2F7;
+	--color-text-secondary: #AEAEB2;
+	--color-text-muted: #636366;
+
+	--color-border: #38383A;
+	--color-border-light: rgba(255, 255, 255, 0.08);
+
+	--color-success: #30D158;
+	--color-danger: #FF453A;
+
+	--shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.06);
+	--shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.5);
+	--shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+	scroll-behavior: smooth;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: hidden;
+	width: 100%;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	font-family: var(--font-sans);
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	line-height: 1.47059;
+	letter-spacing: -0.022em;
+	min-height: 100vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 100%;
+	font-feature-settings: "cv11", "ss01";
+}
+
+/* ============================================
+   Scrollbar — Minimal
+   ============================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+	background: var(--color-border);
+	border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes slideUp {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   Reusable Classes
+   ============================================ */
+.animate-fade-in { animation: fadeIn 0.25s var(--ease-out) forwards; }
+.animate-slide-up { animation: slideUp 0.3s var(--ease-out) forwards; }
+
+.classic-card {
+	background: var(--color-bg-card);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-card);
+}
+
+.classic-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 16px;
+	border-radius: var(--radius-md);
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s var(--ease-out);
+	border: none;
+	line-height: 1.3;
+}
+
+.btn-primary {
+	background-color: var(--color-primary);
+	color: white;
+}
+.btn-primary:hover:not(:disabled) { background-color: var(--color-primary-hover); }
+.btn-primary:active:not(:disabled) { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+	background-color: var(--color-bg-hover);
+	color: var(--color-text);
+}
+.btn-secondary:hover { background-color: rgba(0, 0, 0, 0.08); }
+.dark .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+/* ============================================
+   Selection
+   ============================================ */
+::selection {
+	background: var(--color-primary-soft);
+	color: var(--color-primary);
+}
